@@ -6,104 +6,127 @@
 //  Copyright © 2016 Yuzhou Li. All rights reserved.
 //
 
+#include <time.h>
+#include <unistd.h>
 #include "FastFT.h"
-#include "Complex.h"
 #include "stdlib.h"
 #include "math.h"
 
-Cpl* initialize_W (int size_x){
-    
-    Cpl* W;
-    W = (Cpl *) malloc(sizeof(Cpl)*size_x);
-    for (int i=0;i<size_x;i++){
-        W[i].real = cos(2* M_PI/(double)(size_x)*i);
-        W[i].image = -sin(2*M_PI/(double)(size_x)*i);
+/**
+ * Initialize a list of Exp(-2*PI*I*k/N) for all k in 0..N
+ * This expedites FFT calculation process as it eliminates repeated
+ * complex exponential calculation
+ */
+Cpl **initialize_W( int size_x ) {
+    Cpl **W = (Cpl **) malloc( sizeof( Cpl * ) * size_x );
+    for ( int i = 0; i < size_x; i++ ) {
+        Cpl *pow = newComplex( 0.0, -2.0 * M_PI * (double) i / (double) size_x );
+        W[i] = expo( pow );
+        free( pow );
     }
     return W;
 }
 
-void InverseX(Cpl *x, int size_x){
-    Cpl temp;
-    unsigned short i;
-    unsigned short j;
-    unsigned short k;
+void InverseX( Cpl **x, int size_x ) {
+    int j;
+    int k;
     double t;
-    for (i=0;i<size_x;i++){
-        k=i;
-        j=0;
-        t=log2(size_x);
-        printf("1f1f1f1f%f\n",t);
-        while(t>0){
+    for ( int i = 0; i < size_x; i++ ) {
+        k = i;
+        j = 0;
+        t = log2( size_x );
+        while ( t > 0 ) {
             t--;
-            printf("2f2f2f2f%f\n",t);
-            j=j<<1;
-            j|= (k&1);
-            k = k>>1;
+            j = j << 1;
+            j |= ( k & 1 );
+            k = k >> 1;
         }
-        printf("end while\n");
-        if (j>1){
-            temp = x[i];
-            x[i] = x[j];
-            x[j] = temp;
+        if ( j > 1 ) {
+            Cpl *temp = x[i % size_x];
+            x[i % size_x] = x[j % size_x];
+            x[i % size_x] = temp;
+            printf( "i = %d\n", i );
+            printf( "j = %d\n", j );
+            printf( "%f\n", temp->re );
+            printf( "%f\n", temp->im );
         }
     }
 }
 
-void FFT(Cpl *W, Cpl *x, int size_x){
-    int i,j,k,l;
-    i=0;
-    j=0;
-    k=0;
-    l=0;
-    Cpl up,down,product;
-    printf("start inver\n");
-    InverseX(x, size_x);
-    printf("end inver\n");
-    printf("first for loop start\n");
-    for (i=0;i<log2(size_x);i++){
-        l=1<<i;
-        printf("l is %d",l);
-        printf("second for loop start\n");
-        for(j=0;j<size_x;j+=2*l){
-            printf("third for loop start\n");
-            for (k=0;k<l;k++){
-                product = multiply(x[j+k+l], W[size_x*k/l/2]);
-                up = add(x[j+k],product);
-                down = minus(x[j+k],product);
-                x[j+k]=up;
-                x[j+k+l]=down;
+/**
+ * Performs Cooley-Tukey FFT algorithm on the input array
+ */
+void FFT( Cpl **W, Cpl **x, int size_x ) {
+    printf( "Start of List\n" );
+    for ( int i = 0; i < size_x; i++ ) {
+        printf( "%f ", x[i]->re );
+        printf( "%f\n", x[i]->im );
+    }
+    printf( "End of List\n" );
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int l = 0;
+    printf( "start inverse\n" );
+    InverseX( x, size_x );
+    printf( "end inverse\n" );
+    printf( "Start of List\n" );
+    for ( int i = 0; i < size_x; i++ ) {
+        printf( "%f ", x[i]->re );
+        printf( "%f\n", x[i]->im );
+    }
+    printf( "End of List\n" );
+    printf( "first for loop start\n" );
+    for ( i = 0; i < log2( size_x ); i++ ) {
+        l = 1 << i;
+        printf( "l is %d", l );
+        printf( "second for loop start\n" );
+        for ( j = 0; j < size_x; j += 2 * l ) {
+            printf( "third for loop start\n" );
+            for ( k = 0; k < l; k++ ) {
+                Cpl *product = multiply( x[j + k + l], W[size_x * k / l / 2] );
+                Cpl *up = add( x[j + k], product );
+                Cpl *down = minus( x[j + k], product );
+                x[j + k] = up;
+                printf( "%d modified\n", j + k );
+                x[j + k + l] = down;
+                printf( "%d modified\n", j + k +l );
             }
         }
     }
 }
 
-void InverseFFT(Cpl *W,Cpl *x,int size_x){
-    int i,j,k;
+/**
+ * Performs inverse FFT on the given input
+ */
+void InverseFFT( Cpl **W, Cpl **x, int size_x ) {
+    int i, j, k;
     int l = size_x;
-    Cpl up,down;
-    for (i=0;i<log2(size_x);i++){
-        l/=2;
-        for (j=0;j<size_x;j+=2*l){
-            for(k=0;k<l;k++){
-                up = add(x[j+k],x[j+k+l]);
-                up.real /=2;
-                up.image /= 2;
-                down = minus(x[j+k],x[j+k+l]);
-                down.real /=2;
-                down.image /= 2;
-                down = divide(down,W[size_x*k/2/l]);
-                x[j+k]=up;
-                x[j+k+l]=down;
+    Cpl *up;
+    Cpl *down;
+    for ( i = 0; i < log2( size_x ); i++ ) {
+        l /= 2;
+        for ( j = 0; j < size_x; j += 2 * l ) {
+            for ( k = 0; k < l; k++ ) {
+                up = add( x[j + k], x[j + k + l] );
+                up->re /= 2.0;
+                up->im /= 2.0;
+                down = minus( x[j + k], x[j + k + l] );
+                down->re /= 2.0;
+                down->im /= 2.0;
+                down = divide( down, W[size_x * k / 2 / l] );
+                x[j + k] = up;
+                x[j + k + l] = down;
             }
         }
     }
-    InverseX(x,size_x);
+    InverseX( x, size_x );
 }
 
 
-void printrs(Cpl *x, int size_x){
-    for(int i=0;i<size_x;i++){
-        printf("i is %d\n",i);
-        printf("x[%d] is (%f,%f) \n",i,x[i].real,x[i].image);
+void printrs( Cpl **x, int size_x ) {
+    for ( int i = 0; i < size_x; i++ ) {
+        printf( "i is %d\n", i );
+        printf( "x[%d] is (%f,%f) \n", i, x[i]->re, x[i]->im );
     }
 }

@@ -11,24 +11,21 @@
 
 #include <stdio.h>
 
-typedef struct Cpl{
-    double real;
-    double image;
-}Cpl;
+typedef struct complex_t {
+    double re;
+    double im;
+} Cpl;
 
-Cpl newComplex(double a, double b);
-Cpl add(Cpl a, Cpl b);
-Cpl minus(Cpl a,Cpl b);
-Cpl multiply(Cpl a, Cpl b);
-Cpl divide (Cpl a,Cpl b);
-Cpl Euler(Cpl a);
+Cpl *newComplex( double a, double b );
 
+Cpl *add( Cpl *a, Cpl *b );
 
+Cpl *minus( Cpl *a, Cpl *b );
 
+Cpl *multiply( Cpl *a, Cpl *b );
 
+Cpl *divide( Cpl *a, Cpl *b );
 
-
-
-
+Cpl *expo( Cpl *a );
 
 #endif /* Complex_h */

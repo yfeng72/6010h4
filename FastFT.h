@@ -12,10 +12,14 @@
 #include <stdio.h>
 #include "Complex.h"
 
-Cpl* initialize_W (int size_x);
-void InverseX(Cpl *x, int size_x);
-void FFT(Cpl *W, Cpl *x, int size_x);
-void InverseFFT(Cpl *W,Cpl *x,int size_x);
-void printrs(Cpl *x, int size_x);
+Cpl **initialize_W( int size_x );
+
+void InverseX( Cpl **x, int size_x );
+
+void FFT( Cpl **W, Cpl **x, int size_x );
+
+void InverseFFT( Cpl **W, Cpl **x, int size_x );
+
+void printrs( Cpl **x, int size_x );
 
 #endif /* FastFT_h */
