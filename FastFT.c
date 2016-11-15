@@ -7,7 +7,6 @@
 //
 
 #include <time.h>
-#include <unistd.h>
 #include "FastFT.h"
 #include "stdlib.h"
 #include "math.h"
@@ -18,11 +17,12 @@
  * complex exponential calculation
  */
 Cpl **initialize_W( int size_x ) {
-    Cpl **W = (Cpl **) malloc( sizeof( Cpl * ) * size_x );
+    Cpl **W = (Cpl **) calloc( (size_t) size_x, sizeof( Cpl * ) );
     for ( int i = 0; i < size_x; i++ ) {
         Cpl *pow = newComplex( 0.0, -2.0 * M_PI * (double) i / (double) size_x );
-        W[i] = expo( pow );
+        Cpl *temp = expo( pow );
         free( pow );
+        W[i] = temp;
     }
     return W;
 }

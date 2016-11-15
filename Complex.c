@@ -12,7 +12,7 @@
 
 
 Cpl *newComplex( double a, double b ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     N->re = a;
     N->im = b;
     printf( "New Complex (%f,%f)\n", a, b );
@@ -20,7 +20,7 @@ Cpl *newComplex( double a, double b ) {
 }
 
 Cpl *add( Cpl *a, Cpl *b ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     N->re = a->re + b->re;
     N->im = a->im + b->im;
     printf( "##Add## New Complex (%f,%f)\n", N->re, N->im );
@@ -28,7 +28,7 @@ Cpl *add( Cpl *a, Cpl *b ) {
 }
 
 Cpl *minus( Cpl *a, Cpl *b ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     N->re = a->re - b->re;
     N->im = a->im - b->im;
     printf( "##Minus## New Complex (%f,%f)\n", N->re, N->im );
@@ -36,7 +36,7 @@ Cpl *minus( Cpl *a, Cpl *b ) {
 }
 
 Cpl *multiply( Cpl *a, Cpl *b ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     N->re = a->re * b->re - a->im * b->im;
     N->im = a->im * b->re + a->re * b->im;
     printf( "##Multiply## New Complex (%f,%f)\n", N->re, N->im );
@@ -44,7 +44,7 @@ Cpl *multiply( Cpl *a, Cpl *b ) {
 }
 
 Cpl *divide( Cpl *a, Cpl *b ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     N->re = 0;
     N->im = 0;
     if ( !( b->re * b->re + b->im * b->im ) ) {
@@ -60,10 +60,10 @@ Cpl *divide( Cpl *a, Cpl *b ) {
 }
 
 Cpl *expo( Cpl *a ) {
-    Cpl *N = (Cpl *) malloc( sizeof( Cpl * ) );
+    Cpl *N = (Cpl *) malloc( sizeof( Cpl ) );
     double coefficient = exp( a->re );
-    N->re = coefficient * cos( N->im );
-    N->im = coefficient * cos( N->im );
+    N->re = coefficient * cos( a->im );
+    N->im = coefficient * cos( a->im );
     printf( "##Exp## New Complex(%f,%f)\n", N->re, N->im );
     return N;
 }
