@@ -28,4 +28,6 @@ Cpl *divide( Cpl *a, Cpl *b );
 
 Cpl *expo( Cpl *a );
 
+Cpl *conjugate( Cpl *a );
+
 #endif /* Complex_h */

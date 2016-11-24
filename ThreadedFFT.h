@@ -11,15 +11,22 @@
 
 typedef struct input_t {
     Cpl **list;
+    Cpl **W;
     int length;
 } Input;
 
-void *partialFFT( void *arg ) {
-    Input *input = (Input *) arg;
-    Cpl **W = initialize_W( input->length );
+typedef struct merge_t {
+    Cpl **halfW;
+    Cpl **firstHalf;
+    Cpl **secondHalf;
+    Cpl **result;
+    int length;
+    int add;
+} Merge;
 
-    pthread_exit( NULL );
-    return NULL;
-}
+
+void *partialFFT( void *arg );
+
+void *merge( void *arg );
 
 #endif //INC_6010H4_THREADEDFFT_H

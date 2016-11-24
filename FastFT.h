@@ -14,11 +14,17 @@
 
 Cpl **initialize_W( int size_x );
 
+Cpl **initialize_HalfW( int size_x );
+
 void InverseX( Cpl **x, int size_x );
 
 void FFT( Cpl **W, Cpl **x, int size_x );
 
+void recursiveFFT( Cpl **W, Cpl **x, int totalLength, int curLength );
+
 void InverseFFT( Cpl **W, Cpl **x, int size_x );
+
+Cpl **scale( Cpl **x, int size_x );
 
 void printrs( Cpl **x, int size_x );
 
