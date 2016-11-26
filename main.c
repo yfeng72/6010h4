@@ -71,6 +71,10 @@ int main( int argc, char **argv ) {
     } else if ( argc > 1 && !strcmp( argv[1], "-inverse" ) ) {
         int size_x = 0;
         Cpl **x = readCSVtoX( "input.csv", &size_x );
+        if ( size_x & ( size_x - 1 ) ) {
+            printf( "Number of terms must be power of 2" );
+            return 1;
+        }
         printf( "The size of x is %d\n", size_x );
         printf( "Start Inverse FFT\n" );
         Cpl **W = initialize_W( size_x );
@@ -90,6 +94,10 @@ int main( int argc, char **argv ) {
         int size_x = 0;
         Cpl **x = readCSVtoX( "input.csv", &size_x );
         printf( "The size of x is %d\n", size_x );
+        if ( size_x & ( size_x - 1 ) ) {
+            printf( "Number of terms must be power of 2" );
+            return 1;
+        }
         printf( "Start Threaded FFT\n" );
         threadedFFT( x, &size_x );
         printf( "Threaded FFT Complete\n" );
