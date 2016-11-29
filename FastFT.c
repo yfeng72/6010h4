@@ -10,6 +10,7 @@
 #include "FastFT.h"
 #include "stdlib.h"
 #include "math.h"
+#define M_PI (3.14159265358979323846)
 
 /**
  * Initialize a list of Exp(-2*PI*I*k/N) for all k in 0..N

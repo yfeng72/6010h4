@@ -3,7 +3,10 @@
 //
 #include <stdlib.h>
 #include <math.h>
+#include <pthread.h>
 #include "ThreadedFFT.h"
+
+#define M_PI (3.14159265358979323846)
 
 void *partialFFT( void *arg ) {
     Input *input = (Input *) arg;

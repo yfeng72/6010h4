@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "Complex.h"
-#include "String.h"
+#include <string.h>
 #include "FastFT.h"
 #include "ThreadedFFT.h"
 

@@ -6,7 +6,7 @@ Yu Feng, Yuzhou Li
 
 # Compilation Instructions
 
-gcc Complex.c Complex.h FastFT.c FastFT.h ThreadedFFT.c ThreadedFFT.h main.c -o main.o -lm -std=c99
+gcc Complex.c Complex.h FastFT.c FastFT.h ThreadedFFT.c ThreadedFFT.h main.c -o main.o -lm -std=c99 -lpthread -O2
 
 # Running Instructions
 
